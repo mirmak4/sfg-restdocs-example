@@ -44,6 +44,8 @@ class BeerControllerTest {
 
     @MockBean
     BeerRepository beerRepository;
+    
+    private final String BEER_ID_PARAM_DESCRIPTION = "UUID of desired beer to get.";
 
     @Test
     void getBeerById() throws Exception {
@@ -52,7 +54,7 @@ class BeerControllerTest {
         mockMvc.perform(get("/api/v1/beer/{beerId}", UUID.randomUUID().toString()).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(document("v1/beer", pathParameters(
-                        parameterWithName("beerId").description("UUID of desired beer to get.")
+                        parameterWithName("beerId").description(BEER_ID_PARAM_DESCRIPTION)
                 )));
     }
 
@@ -72,10 +74,12 @@ class BeerControllerTest {
         BeerDto beerDto =  getValidBeerDto();
         String beerDtoJson = objectMapper.writeValueAsString(beerDto);
 
-        mockMvc.perform(put("/api/v1/beer/" + UUID.randomUUID().toString())
+        mockMvc.perform(put("/api/v1/beer/{beerId}", UUID.randomUUID().toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(beerDtoJson))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isNoContent())
+                .andDo(document("v1/beer", pathParameters(
+                        parameterWithName("beerId").description(BEER_ID_PARAM_DESCRIPTION))));
     }
 
     BeerDto getValidBeerDto(){
